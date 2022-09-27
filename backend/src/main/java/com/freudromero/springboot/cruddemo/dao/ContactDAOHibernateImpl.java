@@ -23,7 +23,6 @@ public class ContactDAOHibernateImpl implements ContactDAO {
     }
 
     @Override
-    @Transactional
     public List<Contact> findAll() {
 
         // get the current hibernate session
@@ -37,5 +36,45 @@ public class ContactDAOHibernateImpl implements ContactDAO {
 
         // return the results
         return contacts;
+    }
+
+    @Override
+    public Contact findById(int theId) {
+
+        // get the current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // get the contact
+        Contact theContact = currentSession.get(Contact.class, theId);
+
+        // return the contact
+        return theContact;
+    }
+
+    @Override
+    public void save(Contact theContact) {
+
+        // get the current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // Save contact
+        currentSession.saveOrUpdate(theContact);
+
+    }
+
+    @Override
+    public void deleteById(int theId) {
+
+        // get the current hibernate session
+        Session currentSession = entityManager.unwrap(Session.class);
+
+        // Delete object with primary key
+        Query theQuery = currentSession.createQuery(
+                "delete from Contact where id=:contactId"
+        );
+        theQuery.setParameter("contactId", theId);
+
+        theQuery.executeUpdate();
+
     }
 }
